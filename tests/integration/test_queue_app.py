@@ -7,9 +7,16 @@ from httpx import ASGITransport, AsyncClient
 
 os.environ.pop("DATABASE_URL", None)
 
+from queue_agents.kv import close_redis
 from queue_agents.web import create_app
 
 app = create_app()
+
+
+@pytest.fixture(autouse=True, scope="module")
+async def _cleanup_redis():
+    yield
+    await close_redis()
 
 
 @pytest.fixture

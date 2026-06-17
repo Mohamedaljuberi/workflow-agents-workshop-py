@@ -43,6 +43,14 @@ def get_redis() -> aioredis.Redis:
     return _client
 
 
+async def close_redis() -> None:
+    """Disconnect the shared client (for graceful shutdown and test cleanup)."""
+    global _client
+    if _client is not None:
+        await _client.aclose()
+        _client = None
+
+
 # -- Queue -------------------------------------------------------------------
 
 async def enqueue_review(job: ReviewJob) -> None:

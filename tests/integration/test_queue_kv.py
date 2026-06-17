@@ -21,6 +21,7 @@ from queue_agents.kv import (
     GROUP,
     STREAM,
     ReviewJob,
+    close_redis,
     ensure_group,
     enqueue_review,
     process_entry,
@@ -36,6 +37,7 @@ async def client():
     yield c
     await c.delete(STREAM)
     await c.aclose()
+    await close_redis()
 
 
 async def _read_one(client: aioredis.Redis, consumer: str = "tester"):

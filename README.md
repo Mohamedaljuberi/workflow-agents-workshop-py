@@ -14,8 +14,7 @@ substrate does.
 
 This is the Python port of [workflow-agents-workshop-ts](../workflow-agents-workshop-ts).
 
-For someone facilitating this workshop, start with [`workshop/facilitators/GUIDE.md`](workshop/facilitators/GUIDE.md)
-and the guided walkthrough in [`workshop/participants/`](workshop/participants).
+For someone facilitating this workshop, start with [`workshop/facilitator-guide.md`](workshop/facilitator-guide.md).
 
 ## The three patterns
 
@@ -48,21 +47,6 @@ Set `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` for real reviews, or force the mock
 with `AGENT_MODEL=mock`.
 
 ## Workshop path
-
-Follow the guided walkthrough in [`workshop/participants/`](workshop/participants) in order:
-
-- [`00-setup.md`](workshop/participants/00-setup.md) — Fork the repo, connect Render, install
-  the CLI, and prepare local test tools
-- [`01-naive-agent.md`](workshop/participants/01-naive-agent.md) — Deploy Pattern 1 with a
-  Blueprint, open the live web service, and see where request-bound agents break
-- [`02-queue-agents.md`](workshop/participants/02-queue-agents.md) — Deploy Pattern 2 with a
-  Blueprint, scale the worker, and hand-write the ack/retry semantics
-- [`03-workflow-agents.md`](workshop/participants/03-workflow-agents.md) — Use the CLI for
-  Pattern 3, create the Workflow service, trigger tasks, and inspect traces
-- [`04-author-a-task.md`](workshop/participants/04-author-a-task.md) — Ship your own Workflow
-  task, compose agents, force retries, and watch the live run
-- [`05-future-iterations.md`](workshop/participants/05-future-iterations.md) — Move toward
-  production with evals, guardrails, circuit breakers, and observability
 
 Patterns 1 and 2 use Blueprints:
 
@@ -256,6 +240,17 @@ exercise. It requires a local Valkey/Redis:
 ```sh
 VALKEY_URL=redis://127.0.0.1:6379 pytest tests/integration/test_queue_kv.py -v
 ```
+
+### Troubleshooting `test_queue_kv`
+
+The queue kv test needs a running Valkey (or Redis) instance. If it hangs or
+skips:
+
+| Symptom | Cause | Fix |
+| --- | --- | --- |
+| All tests show "skipped" | `VALKEY_URL` not set in the environment | Run with the var inline: `VALKEY_URL=redis://127.0.0.1:6379 pytest tests/integration/test_queue_kv.py -v` |
+| `ConnectionError` / `Connection refused` | No Valkey/Redis server running | Start one first: `valkey-server &` or `docker run -d -p 6379:6379 valkey/valkey` or `redis-server &` |
+| Tests pass but pytest hangs | Open Redis connections preventing exit (fixed in recent commits) | Update to the latest code; if still stuck, press Ctrl-C — results are valid |
 
 ## Notes
 
